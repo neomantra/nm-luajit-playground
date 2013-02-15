@@ -261,7 +261,7 @@ ffi.metatype( ev_loop_t, {
         -- loop:unloop()
         unloop = function( ev_loop ) ev_loop:halt() end,
     },
-    __gc = ev_loop_destroy,
+    __gc = libev.ev_loop_destroy,
 })
 
 local ev_timer_t = ffi.typeof('ev_timer')
