@@ -25,25 +25,28 @@ THE SOFTWARE.
 USAGE
 =====
 local ring_buffer = require 'ring_buffer'
-local ring = ring_buffer.new( 1024 )
+local ring = ring_buffer.new( 1024 ) -- pass size in bytes
 
-ring:data()      returns the uint8_t* of the data at the ring's current position 
-ring:data_left()
+ring:data()         -- returns the uint8_t* of the data at the ring's current position 
+ring:data_size()    -- returns the number of bytes between ring's head and its tail
 
-ring:tail()
-ring:buffer_left
+ring:tail()         -- returns the uint8_t of the tail of the ring
+ring:buffer_left()  -- returns the number of bytes at the end of the buffer
 
-ring:buffer()       returns the uint8_t* to the underlying buffer
-ring:buffer_size()  returns the total size of the ring's buffer
-ring:head_offset()  returns the byte offset of the ring's current position
-ring:tail_offset()  returns the byte offset of the ring's current position
+ring:size_left()    -- returns the number of bytes available from the ring's current position
 
-ring:size_left() returns the number of bytes available from the ring's current position
+ring:pull(n)        -- advance the buffer's head position by 'n' bytes, returns pointer to the new head
+ring:push(n)        -- advance the buffer's tail position by 'n' bytes, returns pointer to the new tail
 
-ring:pull(n) advance the buffer's head position by 'n' bytes, returns pointer to the new head
-ring:push(n) advance the buffer's tail position by 'n' bytes, returns pointer to the new tail
+ring:rotate()       -- move the head to the start of the underlying buffer
 
-ring:rotate()   move the head to the front of the buffercurrent position to the start of the underlying buffer
+-- low-level access of the struct internals
+ring.size_          -- the total size of the ring's buffer
+ring.head_          -- the byte offset of the ring's current position
+ring.tail_          -- the byte offset of the ring's current position
+ring.buffer_        -- the uint8_t* to the underlying buffer
+
+ring_buffer.stats() -- returns the number of ring buffers, amount of memory used by all buffers
 --]]
 
 local ffi = require 'ffi'
