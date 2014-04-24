@@ -1,5 +1,5 @@
 --[[
-Copyright (c) 2012-2013 neomantra LLC.
+Copyright (c) 2012-2014 neomantra LLC.
 Author: Evan Wies <evan@neomantra.net>
 
 Released under the MIT License.
@@ -50,6 +50,11 @@ ring_buffer.stats() -- returns the number of ring buffers, amount of memory used
 --]]
 
 local ffi = require 'ffi'
+local C = ffi.C
+
+ffi.cdef([[
+void *memmove(void *dest, const void *src, size_t n);
+]])
 
 -- public API
 local ring_buffer = {}
@@ -98,8 +103,9 @@ local ring_buffer_mt = {
         end,
             
         rotate = function(rb)
+            if rb.head_ == 0 then return end
             local data_size = rb.tail_ - rb.head_
-            ffi.copy( rb.buffer_, rb.buffer_ + rb.head_, data_size )
+            C.memmove( rb.buffer_, rb.buffer_ + rb.head_, data_size )
             rb.head_, rb.tail_ = 0, data_size
         end,        
      },
